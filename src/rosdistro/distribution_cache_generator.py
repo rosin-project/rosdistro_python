@@ -48,7 +48,8 @@ from .distribution_cache import DistributionCache
 
 def generate_distribution_caches(
     index, dist_names=None, preclean=False,
-    ignore_local=False, include_source=False, debug=False
+    ignore_local=False, include_source=False, debug=False,
+    ignore_errors=False
 ):
     if os.path.isfile(index):
         index = 'file://' + os.path.abspath(index)
@@ -63,7 +64,8 @@ def generate_distribution_caches(
         try:
             cache = generate_distribution_cache(
                 index, dist_name, preclean=preclean,
-                ignore_local=ignore_local, include_source=include_source, debug=debug)
+                ignore_local=ignore_local, include_source=include_source, debug=debug,
+                ignore_errors=ignore_errors)
         except RuntimeError as e:
             errors.append(str(e))
             continue
@@ -74,7 +76,7 @@ def generate_distribution_caches(
 
 
 def generate_distribution_cache(index, dist_name, preclean=False, ignore_local=False,
-                                include_source=False, debug=False):
+                                include_source=False, debug=False, ignore_errors=False):
     dist, cache = _get_cached_distribution(
         index, dist_name, preclean=preclean, ignore_local=ignore_local,
         include_source=include_source)
@@ -134,7 +136,7 @@ def generate_distribution_cache(index, dist_name, preclean=False, ignore_local=F
     if not debug:
         print('')
 
-    if errors:
+    if errors and not ignore_errors:
         raise RuntimeError('\n'.join(errors))
 
     return cache

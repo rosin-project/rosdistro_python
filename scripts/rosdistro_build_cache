@@ -64,6 +64,10 @@ def parse_args(args=sys.argv[1:]):
     add('--preclean', action='store_true', default=False,
         help='Build the cache from scratch instead of reusing cached data'
     )
+    add(
+        '--ignore-errors', action='store_true', default=False,
+        help='Ignore any and all errors while building cache'
+    )
     return parser.parse_args(args)
 
 
@@ -74,7 +78,8 @@ def main():
         logger.level = logging.DEBUG
 
     try:
-        caches = generate_release_caches(args.index, preclean=args.preclean, debug=args.debug)
+        caches = generate_release_caches(args.index, preclean=args.preclean, debug=args.debug,
+            ignore_errors=args.ignore_errors)
     except RuntimeError as e:
         print(str(e), file=sys.stderr)
         sys.exit(1)

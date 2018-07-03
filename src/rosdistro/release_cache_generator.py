@@ -45,7 +45,7 @@ from . import _get_dist_file_data, get_cached_release, get_index, get_release_ca
 from .release_cache import ReleaseCache
 
 
-def generate_release_caches(index, dist_names=None, preclean=False, debug=False):
+def generate_release_caches(index, dist_names=None, preclean=False, debug=False, ignore_errors=False):
     if os.path.isfile(index):
         index = 'file://' + os.path.abspath(index)
     index = get_index(index)
@@ -57,7 +57,7 @@ def generate_release_caches(index, dist_names=None, preclean=False, debug=False)
     caches = {}
     for dist_name in dist_names:
         try:
-            cache = generate_release_cache(index, dist_name, preclean, debug)
+            cache = generate_release_cache(index, dist_name, preclean, debug, ignore_errors)
         except RuntimeError as e:
             errors.append(str(e))
             continue
@@ -67,7 +67,7 @@ def generate_release_caches(index, dist_names=None, preclean=False, debug=False)
     return caches
 
 
-def generate_release_cache(index, dist_name, preclean=False, debug=False):
+def generate_release_cache(index, dist_name, preclean=False, debug=False, ignore_errors=False):
     dist, cache = _get_cached_release(index, dist_name, preclean)
     # fetch all manifests
     print('- fetch missing manifests')
@@ -101,7 +101,7 @@ def generate_release_cache(index, dist_name, preclean=False, debug=False):
     if not debug:
         print('')
 
-    if errors:
+    if errors and not ignore_errors:
         raise RuntimeError('\n'.join(errors))
 
     return cache

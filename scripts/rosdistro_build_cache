@@ -78,8 +78,8 @@ def main():
         logger.level = logging.DEBUG
 
     try:
-        caches = generate_release_caches(args.index, preclean=args.preclean, debug=args.debug,
-            ignore_errors=args.ignore_errors)
+        caches = generate_release_caches(args.index, dist_names=args.dist_names,
+            preclean=args.preclean, debug=args.debug, ignore_errors=args.ignore_errors)
     except RuntimeError as e:
         print(str(e), file=sys.stderr)
         sys.exit(1)
